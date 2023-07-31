@@ -1,5 +1,6 @@
 package au.auxy.composearc.ui.theme
 
+import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +57,7 @@ fun ComposeArcTheme(
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            val window = view.findFragment<Fragment>().requireActivity().window
+            val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.primary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
