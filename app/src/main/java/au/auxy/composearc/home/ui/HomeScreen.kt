@@ -19,21 +19,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import au.auxy.composearc.home.model.HomeItem
+import au.auxy.composearc.playground.navigation.PlaygroundNavRoute
 import au.auxy.composearc.ui.theme.ComposeArcTheme
 
 @Composable
-fun HomeScreen(title: String) {
+fun HomeScreen(title: String, navigate: (route: String) -> Unit) {
     val homeItems = listOf(
         HomeItem("Home", Icons.Default.Home),
         HomeItem("Account", Icons.Default.AccountBox),
         HomeItem("Shopping", Icons.Default.ShoppingCart)
     )
-    HomeScreen(title = title, homeItems = homeItems)
+    HomeScreen(title = title, homeItems = homeItems, navigate = navigate)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeScreen(title: String, homeItems: List<HomeItem>) = Scaffold(
+private fun HomeScreen(
+    title: String,
+    homeItems: List<HomeItem>,
+    navigate: (route: String) -> Unit
+) = Scaffold(
     topBar = { TopAppBar(title = { Text(text = title) }) }
 ) { paddingValues ->
     LazyVerticalGrid(
@@ -55,7 +60,15 @@ private fun HomeScreen(title: String, homeItems: List<HomeItem>) = Scaffold(
                 modifier = Modifier.requiredSize(128.dp),
                 name = homeItems[index].name,
                 icon = homeItems[index].icon
-            ) {}
+            ) {
+                navigate(
+                    when (homeItems[index].name) {
+                        "Account" -> PlaygroundNavRoute
+                        "Shopping" -> ""
+                        else -> ""
+                    }
+                )
+            }
         }
     }
 }
@@ -64,10 +77,11 @@ private fun HomeScreen(title: String, homeItems: List<HomeItem>) = Scaffold(
 @Composable
 private fun HomeScreenPreview() = ComposeArcTheme {
     HomeScreen(
-        title = "Home screen", listOf(
+        title = "Home screen",
+        homeItems = listOf(
             HomeItem("Home", Icons.Default.Home),
             HomeItem("Account", Icons.Default.AccountBox),
-            HomeItem("Shopping", Icons.Default.ShoppingCart)
+            HomeItem("Shopping", Icons.Default.ShoppingCart),
         )
-    )
+    ) {}
 }

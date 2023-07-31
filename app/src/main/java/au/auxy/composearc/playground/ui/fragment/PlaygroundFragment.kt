@@ -18,7 +18,10 @@ class PlaygroundFragment : BaseComposeFragment() {
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = "PlaygroundHome") {
             composable(route = "PlaygroundHome") {
-                PlaygroundHomeScreen(hiltViewModel()) { navController.navigate("PlaygroundDetail") }
+                PlaygroundHomeScreen(
+                    hiltViewModel(), { navController.navigateUp() }) {
+                    navController.navigate("PlaygroundDetail")
+                }
             }
             composable(route = "PlaygroundDetail") {
                 PlaygroundDetailScreen { navigateBack() }
