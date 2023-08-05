@@ -1,6 +1,6 @@
 package au.auxy.composearc.account.model
 
-data class AccountDetail(
+internal data class AccountDetail(
     val dob: String,
     val buildingNumber: String,
     val streetAddress: String,

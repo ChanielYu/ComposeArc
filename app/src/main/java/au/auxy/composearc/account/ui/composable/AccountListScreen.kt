@@ -2,14 +2,11 @@ package au.auxy.composearc.account.ui.composable
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement.spacedBy
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -60,11 +57,6 @@ private fun AccountListScreen(
     content(paddingValues)
 }
 
-@Composable
-private fun ShimmerContent(modifier: Modifier) = Box(modifier = modifier.fillMaxSize()) {
-    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun AccountListContent(
@@ -73,15 +65,14 @@ private fun AccountListContent(
     navigate: (account: Account) -> Unit
 ) = LazyColumn(
     modifier = modifier,
+    contentPadding = PaddingValues(16.dp),
     verticalArrangement = spacedBy(8.dp, Alignment.Top)
 ) {
     items(count = accounts.size, key = { idx -> accounts[idx].uid }) { idx ->
         when (val accountItem = accounts[idx]) {
             is AccountItem -> AccountCardItem(
                 account = accountItem.account,
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-                    .animateItemPlacement()
+                modifier = Modifier.animateItemPlacement()
             ) {
                 navigate(accountItem.account)
             }
@@ -91,15 +82,7 @@ private fun AccountListContent(
 
 @Preview
 @Composable
-private fun ShimmerContentPreview() = ComposeArcTheme {
-    AccountListScreen({}) { paddingValues ->
-        ShimmerContent(modifier = Modifier.padding(paddingValues))
-    }
-}
-
-@Preview
-@Composable
-private fun AccountListContentPreview() = ComposeArcTheme {
+private fun AccountListScreenPreview() = ComposeArcTheme {
     AccountListScreen({}) { paddingValues ->
         AccountListContent(
             Modifier.padding(paddingValues),

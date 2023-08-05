@@ -7,7 +7,7 @@ import kotlinx.coroutines.delay
 import java.text.DateFormat
 import javax.inject.Inject
 
-class AccountRepository @Inject constructor(
+internal class AccountRepository @Inject constructor(
     private val faker: Faker,
     private val dateFormat: DateFormat
 ) {
