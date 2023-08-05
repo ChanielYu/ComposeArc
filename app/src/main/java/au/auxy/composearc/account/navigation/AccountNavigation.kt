@@ -1,4 +1,4 @@
-package au.auxy.composearc.playground.navigation
+package au.auxy.composearc.account.navigation
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -7,7 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import au.auxy.composearc.playground.ui.composable.AccountListScreen
+import au.auxy.composearc.playground.navigation.PlaygroundParaKey
+import au.auxy.composearc.account.ui.composable.AccountListScreen
 import au.auxy.composearc.playground.ui.composable.PlaygroundDetailScreen
 
 internal const val AccountDetailParaKey = "account_detail_para_key"

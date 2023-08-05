@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import au.auxy.composearc.home.navigation.HomeNavRoute
 import au.auxy.composearc.home.navigation.homeGraph
-import au.auxy.composearc.playground.navigation.accountGraph
+import au.auxy.composearc.account.navigation.accountGraph
 import au.auxy.composearc.playground.navigation.playgroundGraph
 
 @Composable

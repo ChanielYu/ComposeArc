@@ -1,6 +1,6 @@
-package au.auxy.composearc.repository
+package au.auxy.composearc.playground.repository
 
-import au.auxy.composearc.repository.ItemType.HOME_ITEM
+import au.auxy.composearc.playground.repository.ItemType.HOME_ITEM
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 

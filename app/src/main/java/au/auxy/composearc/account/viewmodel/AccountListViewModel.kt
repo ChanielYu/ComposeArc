@@ -1,9 +1,10 @@
-package au.auxy.composearc.playground.viewmodel
+package au.auxy.composearc.account.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import au.auxy.composearc.playground.contract.AccountContract.AccountListViewState
-import au.auxy.composearc.repository.AccountRepository
+import au.auxy.composearc.account.contract.AccountContract.AccountListViewState
+import au.auxy.composearc.account.repository.AccountRepository
+import au.auxy.composearc.account.ui.model.AccountListItem.AccountItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,7 +25,11 @@ internal class AccountListViewModel @Inject constructor(
 
     init {
         flow { emit(repository.readAccounts()) }.map { accounts ->
-            AccountListViewState(accounts)
+            accounts.map { account ->
+                AccountItem(account)
+            }
+        }.map { listItems ->
+            AccountListViewState(listItems)
         }.onEach { state ->
             _viewState.update { state }
         }.catch {

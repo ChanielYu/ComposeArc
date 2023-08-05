@@ -1,4 +1,4 @@
-package au.auxy.composearc.repository
+package au.auxy.composearc.playground.repository
 
 enum class ItemType {
     HOME_ITEM,

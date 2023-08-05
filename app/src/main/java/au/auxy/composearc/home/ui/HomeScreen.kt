@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import au.auxy.composearc.home.model.HomeItem
-import au.auxy.composearc.playground.navigation.AccountNavRoute
+import au.auxy.composearc.account.navigation.AccountNavRoute
 import au.auxy.composearc.playground.navigation.PlaygroundNavRoute
 import au.auxy.composearc.playground.navigation.PlaygroundParaKey
 import au.auxy.composearc.ui.theme.ComposeArcTheme

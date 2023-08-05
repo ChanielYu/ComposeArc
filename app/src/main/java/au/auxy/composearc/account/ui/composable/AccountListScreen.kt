@@ -1,4 +1,4 @@
-package au.auxy.composearc.playground.ui.composable
+package au.auxy.composearc.account.ui.composable
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -14,9 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import au.auxy.composearc.account.model.Account
+import au.auxy.composearc.account.ui.model.AccountListItem
+import au.auxy.composearc.account.ui.model.AccountListItem.AccountItem
+import au.auxy.composearc.account.viewmodel.AccountListViewModel
 import au.auxy.composearc.application.AppConst.ACCOUNT_LIST_SCREEN_TITLE
-import au.auxy.composearc.playground.viewmodel.AccountListViewModel
-import au.auxy.composearc.repository.Account
+import au.auxy.composearc.ui.composable.SharedCollapsedScaffold
 import au.auxy.composearc.ui.theme.ComposeArcTheme
 
 @Composable
@@ -30,7 +33,7 @@ internal fun AccountListScreen(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun AccountListScreen(
-    accounts: List<Account>, navigateUp: () -> Unit, navigate: (account: Account) -> Unit
+    accounts: List<AccountListItem>, navigateUp: () -> Unit, navigate: (account: Account) -> Unit
 ) = SharedCollapsedScaffold(
     title = ACCOUNT_LIST_SCREEN_TITLE,
     icon = Icons.Default.ArrowBack,
@@ -40,16 +43,16 @@ private fun AccountListScreen(
         modifier = Modifier.padding(paddingValues),
         verticalArrangement = spacedBy(8.dp, Alignment.Top)
     ) {
-        items(count = accounts.size, key = { idx ->
-            "${accounts[idx].name} ${accounts[idx].number}"
-        }) { idx ->
-            AccountCardItem(
-                account = accounts[idx],
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp)
-                    .animateItemPlacement()
-            ) {
-                navigate(accounts[idx])
+        items(count = accounts.size, key = { idx -> accounts[idx].uid }) { idx ->
+            when (val accountItem = accounts[idx]) {
+                is AccountItem -> AccountCardItem(
+                    account = accountItem.account,
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp)
+                        .animateItemPlacement()
+                ) {
+                    navigate(accountItem.account)
+                }
             }
         }
     }
@@ -59,6 +62,6 @@ private fun AccountListScreen(
 @Composable
 private fun AccountListScreenPreview() = ComposeArcTheme {
     AccountListScreen(List(20) { index ->
-        Account("John$index", "10086$index", "88")
+        AccountItem(Account("John$index", "10086$index", "88"))
     }, {}) {}
 }
