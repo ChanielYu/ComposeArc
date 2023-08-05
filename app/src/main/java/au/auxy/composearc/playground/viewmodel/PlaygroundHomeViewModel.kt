@@ -1,6 +1,7 @@
 package au.auxy.composearc.playground.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import au.auxy.composearc.playground.contract.PlaygroundHomeContract.Companion.INIT_VIEW_STATE
@@ -14,6 +15,7 @@ import au.auxy.composearc.playground.contract.PlaygroundHomeContract.HomeViewEve
 import au.auxy.composearc.playground.contract.PlaygroundHomeContract.HomeViewEvent.NavBack
 import au.auxy.composearc.playground.contract.PlaygroundHomeContract.HomeViewEvent.NavDetail
 import au.auxy.composearc.playground.contract.PlaygroundHomeContract.HomeViewState
+import au.auxy.composearc.playground.navigation.PlaygroundParaKey
 import au.auxy.composearc.repository.ItemType.EXIT_ITEM
 import au.auxy.composearc.repository.ItemType.HOME_ITEM
 import au.auxy.composearc.repository.PlaygroundRepository
@@ -36,7 +38,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlaygroundHomeViewModel @Inject constructor(
-    private val repository: PlaygroundRepository
+    private val repository: PlaygroundRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _viewState = MutableStateFlow(INIT_VIEW_STATE)
     val viewState: StateFlow<HomeViewState> = _viewState
@@ -92,9 +95,11 @@ class PlaygroundHomeViewModel @Inject constructor(
                     emit(6)
                 }
             )
-        }.onEach { num->
+        }.onEach { num ->
             Log.d(TAG, num.toString())
         }.launchIn(viewModelScope)
+        val para: String? = savedStateHandle[PlaygroundParaKey]
+        para?.length
     }
 
     fun onEvent(event: HomeViewEvent): Any = when (event) {

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package au.auxy.composearc.playground.ui.composable
 
 import android.util.Log
@@ -14,6 +16,7 @@ import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,44 +37,42 @@ fun PlaygroundHomeScreen(
 ) {
     Log.d(COMPOSE_TAG, "PlaygroundHomeScreen")
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
-    SharedScaffold(navigateUp, navigateDetail)
+    SharedScaffold(navigateUp = navigateUp, navigateDetail = navigateDetail)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SharedScaffold(
+    scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
+        rememberTopAppBarState()
+    ),
     navigateUp: () -> Unit,
     navigateDetail: () -> Unit
-) {
-    //val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            LargeTopAppBar(
-                title = { Text(text = "Scroll Behavior Test") },
-                navigationIcon = {
-                    IconButton(onClick = navigateUp) {
-                        Icon(imageVector = Icons.Default.Menu, contentDescription = "")
-                    }
-                },
-                scrollBehavior = scrollBehavior
+) = Scaffold(
+    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    topBar = {
+        LargeTopAppBar(
+            title = { Text(text = "Scroll Behavior Test") },
+            navigationIcon = {
+                IconButton(onClick = navigateUp) {
+                    Icon(imageVector = Icons.Default.Menu, contentDescription = "")
+                }
+            },
+            scrollBehavior = scrollBehavior
+        )
+    }
+) { paddingValues ->
+    LazyColumn(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxWidth()
+    ) {
+        items(50) { item ->
+            Text(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .clickable { navigateDetail() },
+                text = "Item $item"
             )
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxWidth()
-        ) {
-            items(50) { item ->
-                Text(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .clickable { navigateDetail() },
-                    text = "Item $item"
-                )
-            }
         }
     }
 }
@@ -79,5 +80,5 @@ private fun SharedScaffold(
 @Preview(showBackground = true)
 @Composable
 private fun GreetingPreview() = ComposeArcTheme {
-    SharedScaffold({}, {})
+    SharedScaffold(navigateUp = {}, navigateDetail = {})
 }
