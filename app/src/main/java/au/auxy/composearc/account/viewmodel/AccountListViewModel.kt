@@ -2,6 +2,9 @@ package au.auxy.composearc.account.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import au.auxy.composearc.account.contract.AccountContract.AccountListContent.Shimmer
+import au.auxy.composearc.account.contract.AccountContract.AccountListContent.ShowAccountList
+import au.auxy.composearc.account.contract.AccountContract.AccountListContent.ShowError
 import au.auxy.composearc.account.contract.AccountContract.AccountListViewState
 import au.auxy.composearc.account.repository.AccountRepository
 import au.auxy.composearc.account.ui.model.AccountListItem.AccountItem
@@ -29,15 +32,15 @@ internal class AccountListViewModel @Inject constructor(
                 AccountItem(account)
             }
         }.map { listItems ->
-            AccountListViewState(listItems)
+            AccountListViewState(ShowAccountList(listItems))
         }.onEach { state ->
             _viewState.update { state }
         }.catch {
-            TODO("Not yet implemented")
+            _viewState.update { AccountListViewState(ShowError) }
         }.launchIn(viewModelScope)
     }
 
     companion object {
-        private val DEFAULT_VIEW_STATE = AccountListViewState(emptyList())
+        private val DEFAULT_VIEW_STATE = AccountListViewState(Shimmer)
     }
 }
