@@ -8,18 +8,23 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import au.auxy.composearc.account.ui.composable.AccountDetailScreen
+import au.auxy.composearc.account.ui.composable.AccountEligibilityScreen
 import au.auxy.composearc.account.ui.composable.AccountListScreen
 import au.auxy.composearc.playground.navigation.PlaygroundParaKey
 
-internal const val AccountDetailNameKey = "account_detail_name_key"
-internal const val AccountDetailNumberKey = "account_detail_number_key"
-internal const val AccountDetailExtraKey = "account_detail_extra_key"
+internal const val AccountNameKey = "account_detail_name_key"
+internal const val AccountNumberKey = "account_detail_number_key"
+internal const val AccountExtraKey = "account_detail_extra_key"
 internal const val AccountNavRoute = "App/Account"
 internal const val AccountListRoute = "App/AccountList"
 internal const val AccountDetailRoute = "App/AccountDetail?" +
-        "$AccountDetailNameKey={$AccountDetailNameKey}&" +
-        "$AccountDetailNumberKey={$AccountDetailNumberKey}&" +
-        "$AccountDetailExtraKey={$AccountDetailExtraKey}"
+        "$AccountNameKey={$AccountNameKey}&" +
+        "$AccountNumberKey={$AccountNumberKey}&" +
+        "$AccountExtraKey={$AccountExtraKey}"
+internal const val AccountEligibilityRoute = "App/AccountEligibility" +
+        "$AccountNameKey={$AccountNameKey}&" +
+        "$AccountNumberKey={$AccountNumberKey}&" +
+        "$AccountExtraKey={$AccountExtraKey}"
 
 internal fun NavGraphBuilder.accountGraph(navController: NavController) {
     navigation(startDestination = AccountListRoute, route = AccountNavRoute) {
@@ -28,26 +33,46 @@ internal fun NavGraphBuilder.accountGraph(navController: NavController) {
             para?.length
             AccountListScreen(hiltViewModel(), { navController.navigateUp() }) { account ->
                 navController.navigate(account.run {
-                    AccountDetailRoute.replace("{$AccountDetailNameKey}", name)
-                        .replace("{$AccountDetailNumberKey}", number)
-                        .replace("{$AccountDetailExtraKey}", extra)
+                    AccountDetailRoute.replace("{$AccountNameKey}", name)
+                        .replace("{$AccountNumberKey}", number)
+                        .replace("{$AccountExtraKey}", extra)
                 })
             }
         }
         composable(route = AccountDetailRoute, arguments = listOf(
-            navArgument(AccountDetailNameKey) {
+            navArgument(AccountNameKey) {
                 type = NavType.StringType
                 nullable = true
-            }, navArgument(AccountDetailNumberKey) {
+            }, navArgument(AccountNumberKey) {
                 type = NavType.StringType
                 nullable = true
-            }, navArgument(AccountDetailExtraKey) {
+            }, navArgument(AccountExtraKey) {
                 type = NavType.StringType
                 nullable = true
             }
         )) {
-            AccountDetailScreen(hiltViewModel(), { navController.navigateUp() }) {
-                navController.navigateUp()
+            AccountDetailScreen(hiltViewModel(), { navController.navigateUp() }) { account ->
+                navController.navigate(account.run {
+                    AccountEligibilityRoute.replace("{$AccountNameKey}", name)
+                        .replace("{$AccountNumberKey}", number)
+                        .replace("{$AccountExtraKey}", extra)
+                })
+            }
+        }
+        composable(route = AccountEligibilityRoute, arguments = listOf(
+            navArgument(AccountNameKey) {
+                type = NavType.StringType
+                nullable = true
+            }, navArgument(AccountNumberKey) {
+                type = NavType.StringType
+                nullable = true
+            }, navArgument(AccountExtraKey) {
+                type = NavType.StringType
+                nullable = true
+            }
+        )) {
+            AccountEligibilityScreen(viewModel = hiltViewModel(), { navController.navigateUp() }) {
+
             }
         }
     }

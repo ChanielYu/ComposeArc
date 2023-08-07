@@ -23,4 +23,13 @@ internal interface AccountContract {
     }
 
     data class AccountDetailViewState(val accountDetailContent: AccountDetailContent)
+
+    data class AccountEligibilityViewState(
+        val title: String, val upStream: String, val downStream: String
+    )
+
+    sealed class AccountEligibilityIntent {
+        object Refresh : AccountEligibilityIntent()
+        object Navigate : AccountEligibilityIntent()
+    }
 }

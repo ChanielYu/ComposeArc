@@ -3,14 +3,19 @@ package au.auxy.composearc.account.ui.composable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import au.auxy.composearc.account.contract.AccountContract.AccountDetailContent.Shimmer
 import au.auxy.composearc.account.contract.AccountContract.AccountDetailContent.ShowAccountDetail
@@ -26,7 +31,7 @@ import au.auxy.composearc.ui.theme.ComposeArcTheme
 
 @Composable
 internal fun AccountDetailScreen(
-    viewModel: AccountDetailViewModel, navigateUp: () -> Unit, navigate: () -> Unit
+    viewModel: AccountDetailViewModel, navigateUp: () -> Unit, navigate: (account: Account) -> Unit
 ) {
     val viewState by viewModel.viewState.collectAsStateWithLifecycle()
     when (val viewContent = viewState.accountDetailContent) {
@@ -37,7 +42,15 @@ internal fun AccountDetailScreen(
         is ShowAccountDetail -> AccountDetailScreen(
             title = viewContent.title, navigateUp = navigateUp
         ) { paddingValues ->
-            AccountListContent(modifier = Modifier.padding(paddingValues), viewContent.details) {}
+            AccountListContent(
+                modifier = Modifier.padding(paddingValues),
+                details = viewContent.details,
+                navigate = {
+                    viewContent.details.filterIsInstance<AccountItem>().firstOrNull()?.let {
+                        navigate(it.account)
+                    }
+                }
+            )
         }
 
         ShowError -> TODO()
@@ -57,32 +70,50 @@ private fun AccountListContent(
     modifier: Modifier,
     details: List<AccountDetailItem>,
     navigate: () -> Unit
-) = LazyColumn(
-    modifier = modifier,
-    contentPadding = PaddingValues(16.dp),
-    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top)
-) {
-    details.forEach { detail ->
-        when (detail) {
-            is AccountItem -> item(key = detail.uid, contentType = AccountItem::class) {
-                AccountCardItem(
-                    account = detail.account,
-                    modifier = Modifier.animateItemPlacement()
-                ) {}
-            }
+) = ConstraintLayout(modifier = modifier.fillMaxSize()) {
+    val (detailList, checkButton) = createRefs()
+    LazyColumn(
+        modifier = Modifier.constrainAs(detailList) {
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            top.linkTo(parent.top)
+            bottom.linkTo(checkButton.top)
+            width = Dimension.fillToConstraints
+            height = Dimension.fillToConstraints
+        },
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top)
+    ) {
+        details.forEach { detail ->
+            when (detail) {
+                is AccountItem -> item(key = detail.uid, contentType = AccountItem::class) {
+                    AccountCardItem(
+                        account = detail.account,
+                        modifier = Modifier.animateItemPlacement()
+                    ) {}
+                }
 
-            is SectionItem -> stickyHeader(key = detail.uid, contentType = SectionItem::class) {
-                AccountSectionItem(
-                    body = detail.sectionText, modifier = Modifier.animateItemPlacement()
-                )
-            }
+                is SectionItem -> stickyHeader(key = detail.uid, contentType = SectionItem::class) {
+                    AccountSectionItem(
+                        body = detail.sectionText, modifier = Modifier.animateItemPlacement()
+                    )
+                }
 
-            is SimpleItem -> item(key = detail.uid, contentType = SimpleItem::class) {
-                AccountSimpleItem(
-                    body = detail.body, modifier = Modifier.animateItemPlacement()
-                )
+                is SimpleItem -> item(key = detail.uid, contentType = SimpleItem::class) {
+                    AccountSimpleItem(
+                        body = detail.body, modifier = Modifier.animateItemPlacement()
+                    )
+                }
             }
         }
+    }
+    OutlinedButton(onClick = navigate, modifier = Modifier.constrainAs(checkButton) {
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+        top.linkTo(detailList.bottom)
+        bottom.linkTo(parent.bottom)
+    }) {
+        Text(text = "Check eligibility")
     }
 }
 

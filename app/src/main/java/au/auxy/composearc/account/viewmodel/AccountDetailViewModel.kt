@@ -6,7 +6,7 @@ import au.auxy.composearc.account.contract.AccountContract.AccountDetailContent.
 import au.auxy.composearc.account.contract.AccountContract.AccountDetailContent.ShowAccountDetail
 import au.auxy.composearc.account.contract.AccountContract.AccountDetailContent.ShowError
 import au.auxy.composearc.account.contract.AccountContract.AccountDetailViewState
-import au.auxy.composearc.account.model.AccountDetailArg
+import au.auxy.composearc.account.model.AccountArg
 import au.auxy.composearc.account.repository.AccountRepository
 import au.auxy.composearc.account.ui.model.AccountDetailItem.AccountItem
 import au.auxy.composearc.account.ui.model.AccountDetailItem.SectionItem
@@ -24,14 +24,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class AccountDetailViewModel @Inject constructor(
-    acctDetailArg: AccountDetailArg,
+    accountArg: AccountArg,
     private val repository: AccountRepository
 ) : ViewModel() {
     private val _viewState = MutableStateFlow(DEFAULT_VIEW_STATE)
     val viewState = _viewState.asStateFlow()
 
     init {
-        flowOf(acctDetailArg).map { arg ->
+        flowOf(accountArg).map { arg ->
             arg.toAccount()
         }.map { account ->
             repository.readAccountDetail(account.name) to account
